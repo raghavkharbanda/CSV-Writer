@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Aug  5 17:01:28 2017
+
+@author: raghav
+"""
+
+import sqlite3
+import csv
+
+def State(state):
+    #search for state in database
+    try:
+        conn=sqlite3.connect('email.sqlite')
+        cur=conn.cursor()
+        cur.execute('SELECT*FROM cities WHERE city_state = ?',(state,) )
+        ass=[]
+        ass=cur.fetchall()
+        city1,city2=ass[0][1],ass[1][1]
+        print(city1,city2)
+        #update csv file
+        try:
+            with open('internassgn.csv','r',newline='') as dtr:
+                data=list(csv.reader(dtr,delimiter=' '))
+                row=len(data)
+            with open('internassgn.csv','a',newline='') as dtw:
+                a=csv.writer(dtw)
+                data1=[row,'India',state,city1]
+                data2=[row+1,'India',state,city2]
+                a.writerow(data1)
+                a.writerow(data2)
+                print('internassgn.csv updated')
+        except:
+            print('Error updating csv file')
+    except:
+        print(state,'is Not a State')
+        return None
+    
+state=input('Enter State')
+#As the database has state name with their first letter capital
+#and all other letter small so we convert the input string in
+#that form
+state=state.split()
+for i in range(len(state)):
+    state[i]=state[i][0:1].upper()+state[i][1:].lower()
+state=' '.join(state)
+State(state)
